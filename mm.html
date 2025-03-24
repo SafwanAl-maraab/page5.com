@@ -26,7 +26,7 @@
             var message = document.getElementById("message").value;
 
             // تكوين رابط واتساب
-            var phoneNumber ="+967717629952"; // استبدل برقمك مع رمز البلد
+            var phoneNumber ="967717629952"; // استبدل برقمك مع رمز البلد
             var whatsappMessage = `Name: ${name}\nMessage: ${message}`;
             var whatsappURL = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(whatsappMessage)}`;
 
