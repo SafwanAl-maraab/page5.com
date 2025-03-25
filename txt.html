@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>حفظ البيانات على مستند نصي</title>
+</head>
+<body>
+    <h1>حفظ البيانات على مستند نصي</h1>
+    <form id="myForm">
+        <label for="name">الاسم:</label>
+        <input type="text" id="name" name="name"><br><br>
+        <label for="email">البريد الإلكتروني:</label>
+        <input type="email" id="email" name="email"><br><br>
+        <button id="saveButton">حفظ</button>
+    </form>
+    <script src="script.js"></script>
+</body>
+</html>
+<script type="text/javascript">
+document.getElementById("saveButton").addEventListener("click", function() {
+    var name = document.getElementById("name").value;
+    var email = document.getElementById("email").value;
+    var data = "الاسم: " + name + "\nالبريد الإلكتروني: " + email;
+    var blob = new Blob([data], {type: "text/plain"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "data.txt";
+    a.click();
+});
+</script>
