@@ -3,22 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عرض عنوان IP</title>
+    <title>التقاط صورة من الكاميرا</title>
 </head>
 <body>
-    <h1>عنوان IP الخاص بك</h1>
-    <div id="ip-info">جارٍ تحميل عنوان الأيبي...</div>
+    <h1>التقاط صورة من الكاميرا</h1>
+    <video id="video" width="320" height="240" autoplay></video>
+    <button id="capture">التقاط صورة</button>
+    <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
+    <a id="download" style="display:none;">تنزيل الصورة</a>
 
     <script>
-        fetch('https://api.ipify.org?format=json')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("ip-info").innerHTML = `عنوان IP الخاص بك هو: <strong>${data.ip}</strong>`;
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        const captureButton = document.getElementById('capture');
+        const downloadLink = document.getElementById('download');
+
+        // الحصول على إذن للوصول إلى الكاميرا
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+            .then(stream => {
+                video.srcObject = stream;
             })
-            .catch(error => {
-                console.error('حدث خطأ:', error);
-                document.getElementById("ip-info").innerHTML = 'فشل في الحصول على عنوان IP.';
+            .catch(err => {
+                console.error("حدث خطأ:", err);
             });
+
+        // التقاط الصورة عند النقر على الزر
+        captureButton.addEventListener('click', () => {
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataURL = canvas.toDataURL('image/png');
+            
+            // إعداد رابط التنزيل
+            downloadLink.href = dataURL;
+            downloadLink.download = 'snapshot.png';
+            downloadLink.style.display = 'block';
+            downloadLink.innerHTML = 'تنزيل الصورة';
+        });
     </script>
 </body>
 </html>
