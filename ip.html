@@ -3,44 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>التقاط صورة بالكاميرا</title>
-    <style>
-        #snapshot {
-            display: none; /* إخفاء الصورة الملتقطة في البداية */
-            margin-top: 10px; /* إضافة مسافة بين الصورة والزر */
-        }
-    </style>
+    <title>التقاط لقطة شاشة</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-    <h1>التقاط صورة</h1>
-    <video id="video" width="640" height="480" autoplay></video>
-    <button id="snap">التقاط الصورة</button>
-    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
-    <img id="snapshot" src="" alt="صورة التقطت" width="640" height="480"/>
+    <div id="content" style="padding: 20px; border: 1px solid black;">
+        <h1>لقطة شاشة!</h1>
+        <p>هذا هو المحتوى الذي سيتم التقاطه في اللقطة.</p>
+    </div>
+    <button id="capture">التقاط لقطة الشاشة</button>
+    <img id="screenshot" src="" alt="لقطة الشاشة" style="margin-top: 10px;"/>
 
     <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const snapshotImg = document.getElementById('snapshot');
-        const snapButton = document.getElementById('snap');
-        const context = canvas.getContext('2d');
-
-        // الحصول على إذن الوصول إلى الكاميرا
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then((stream) => {
-                video.srcObject = stream;
-            })
-            .catch((err) => {
-                console.error("حدث خطأ: " + err);
+        document.getElementById('capture').addEventListener('click', function() {
+            html2canvas(document.getElementById('content')).then(function(canvas) {
+                // تحويل الكانفاس إلى صورة
+                const imageDataURL = canvas.toDataURL('image/png');
+                document.getElementById('screenshot').src = imageDataURL; // تعيين مصدر الصورة
             });
-
-        // التقاط الصورة عند الضغط على الزر
-        snapButton.addEventListener('click', () => {
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            // تحويل الصورة من الكانفاس إلى صورة
-            const imageDataURL = canvas.toDataURL('image/png');
-            snapshotImg.src = imageDataURL; // تعيين مصدر الصورة الملتقطة
-            snapshotImg.style.display = 'block'; // عرض الصورة الملتقطة
         });
     </script>
 </body>
