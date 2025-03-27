@@ -1,35 +1,40 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="ar">
 <head>
-<title>example</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختيار صورة وعرضها</title>
+    <style>
+        #imagePreview {
+            margin-top: 20px;
+            max-width: 100%;
+            max-height: 400px;
+        }
+    </style>
 </head>
 <body>
-<input type="file" id="hhh">
-<input type="text" id="range">
-<img src="C:\fakepath\cv.png" id="hh">
-<img src="C:\fakepath\cv.png" id="hhi">
-<button onclick="ggg()">vgt2</button><br>
-<button onclick="gg()">vgt</button>
-<script type="text/javascript">
-var rr 
-var hh
-var hhi
-var hhh
-function gg(){
-rr=document.getElementById("range").value
-hh=document.getElementById("hh")
+    <h1>اختر صورة لعرضها</h1>
+    <input type="file" id="imageInput" accept="image/*">
+    <img id="imagePreview" src="" alt="عرض الصورة هنا" style="display:none;">
 
-hh.src= rr
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
 
-alert(rr)
-}
+        imageInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
 
-function ggg(){
-hhh =document.getElementById("hhh").value
-hhi=document.getElementById("hhi")
-hhi.src= hhh
-alert(hhh)
-}
-</script>
+                reader.onload = function(e) {
+                alert(e.target.result)
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block'; // إظهار الصورة
+                }
+
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
 </body>
 </html>
