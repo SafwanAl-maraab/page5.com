@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عرض عنوان IP</title>
+</head>
+<body>
+    <h1>عنوان IP الخاص بك</h1>
+    <div id="ip-info">جارٍ تحميل عنوان الأيبي...</div>
+
+    <script>
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("ip-info").innerHTML = `عنوان IP الخاص بك هو: <strong>${data.ip}</strong>`;
+            })
+            .catch(error => {
+                console.error('حدث خطأ:', error);
+                document.getElementById("ip-info").innerHTML = 'فشل في الحصول على عنوان IP.';
+            });
+    </script>
+</body>
+</html>
