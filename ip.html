@@ -3,42 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>التقاط صورة من الكاميرا</title>
+    <title>تسجيل صوت من الميكروفون</title>
 </head>
 <body>
-    <h1>التقاط صورة من الكاميرا</h1>
-    <video id="video" width="320" height="240" autoplay></video>
-    <button id="capture">التقاط صورة</button>
-    <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
-    <a id="download" style="display:none;">تنزيل الصورة</a>
+    <h1>تسجيل صوت من الميكروفون</h1>
+    <button id="start">ابدأ التسجيل</button>
+    <button id="stop" disabled>أوقف التسجيل</button>
+    <audio id="audioPlayback" controls style="display: none;"></audio>
+    <a id="download" style="display: none;">تنزيل التسجيل</a>
 
     <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const context = canvas.getContext('2d');
-        const captureButton = document.getElementById('capture');
-        const downloadLink = document.getElementById('download');
+        let mediaRecorder;
+        let audioChunks = [];
 
-        // الحصول على إذن للوصول إلى الكاميرا
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
-            .then(stream => {
-                video.srcObject = stream;
-            })
-            .catch(err => {
-                console.error("حدث خطأ:", err);
-            });
+        document.getElementById('start').onclick = async () => {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
 
-        // التقاط الصورة عند النقر على الزر
-        captureButton.addEventListener('click', () => {
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const dataURL = canvas.toDataURL('image/png');
-            
-            // إعداد رابط التنزيل
-            downloadLink.href = dataURL;
-            downloadLink.download = 'snapshot.png';
-            downloadLink.style.display = 'block';
-            downloadLink.innerHTML = 'تنزيل الصورة';
-        });
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audio = document.getElementById('audioPlayback');
+                audio.src = audioUrl;
+                audio.style.display = 'block';
+
+                const downloadLink = document.getElementById('download');
+                downloadLink.href = audioUrl;
+                downloadLink.download = 'recording.wav';
+                downloadLink.style.display = 'block';
+                downloadLink.innerHTML = 'تنزيل التسجيل';
+            };
+
+            mediaRecorder.start();
+            document.getElementById('start').disabled = true;
+            document.getElementById('stop').disabled = false;
+        };
+
+        document.getElementById('stop').onclick = () => {
+            mediaRecorder.stop();
+            document.getElementById('start').disabled = false;
+            document.getElementById('stop').disabled = true;
+        };
     </script>
 </body>
 </html>
