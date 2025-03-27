@@ -1,27 +1,55 @@
-<!DOCTYPE html>
-<html lang="ar">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>التقاط لقطة شاشة</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+<title></title>
 </head>
 <body>
-    <div id="content" style="padding: 20px; border: 1px solid black;">
-        <h1>لقطة شاشة!</h1>
-        <p>هذا هو المحتوى الذي سيتم التقاطه في اللقطة.</p>
-    </div>
-    <button id="capture">التقاط لقطة الشاشة</button>
-    <img id="screenshot" src="" alt="لقطة الشاشة" style="margin-top: 10px;"/>
+<script>
+let stream;
+let video = document.getElementById('video');
+let toggleFlashButton = document.getElementById('toggleFlash');
+let isFlashOn = false;
 
-    <script>
-        document.getElementById('capture').addEventListener('click', function() {
-            html2canvas(document.getElementById('content')).then(function(canvas) {
-                // تحويل الكانفاس إلى صورة
-                const imageDataURL = canvas.toDataURL('image/png');
-                document.getElementById('screenshot').src = imageDataURL; // تعيين مصدر الصورة
-            });
+async function getCamera() {
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: 'environment',
+                torch: true // يمكننا استخدام فلاش الكاميرا
+            }
         });
-    </script>
+        video.srcObject = stream;
+        await video.play();
+    } catch (error) {
+        console.error("خطأ في الوصول إلى الكاميرا: ", error);
+    }
+}
+
+toggleFlashButton.addEventListener('click', async () => {
+    if (!stream) {
+        await getCamera();
+    }
+
+    const track = stream.getVideoTracks()[0];
+    const capabilities = track.getCapabilities();
+
+    if (capabilities.torch) {
+        try {
+            await track.applyConstraints({
+                advanced: [{ torch: !isFlashOn }]
+            });
+            isFlashOn = !isFlashOn;
+            toggleFlashButton.textContent = isFlashOn ? "إيقاف الفلاش" : "تشغيل الفلاش";
+        } catch (error) {
+            console.error("خطأ في تغيير حالة الفلاش: ", error);
+        }
+    } else {
+        console.warn("الكاميرا لا تدعم فلاش LED");
+    }
+});
+
+// استدعاء هذه الدالة عند تحميل الصفحة
+window.onload = getCamera;
+</script>
 </body>
 </html>
