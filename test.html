@@ -4,13 +4,29 @@
 <title>example</title>
 </head>
 <body>
-<input type="file" id="range">
-<img src="C:\fakepath\cv.png">
+<input type="file" id="hhh">
+<input type="text" id="range">
+<img src="C:\fakepath\cv.png" id="hh">
+
+<button onclick="ggg()">vgt2</button><br>
 <button onclick="gg()">vgt</button>
 <script type="text/javascript">
+var rr 
+var hh
+
+var hhh=document.getElementById("hhh")
 function gg(){
-var rr =document.getElementById("range").value
+rr=document.getElementById("range").value
+hh=document.getElementById("hh")
+
+hh.src= rr
+
 alert(rr)
+}
+
+function ggg(){
+hhh.src= hhh
+alert(hhh)
 }
 </script>
 </body>
